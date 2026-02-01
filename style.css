@@ -442,3 +442,84 @@ body {
     border-color: rgb(228, 228, 228);
   }
 }
+
+/* ===============================
+   MOBILE RESPONSIVE FIX
+   =============================== */
+
+@media (max-width: 768px) {
+
+  /* Enable scrolling */
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  /* Center containers properly */
+  .container,
+  .question-container,
+  .result-container {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 40px auto;
+    text-align: center;
+    width: 90%;
+  }
+
+  /* Resize GIF */
+  .local-gif,
+  .gif-result {
+    max-width: 220px;
+    padding-left: 0;
+    margin: auto;
+  }
+
+  /* Smaller text */
+  .question {
+    font-size: 1.8rem;
+  }
+
+  .result-container h2 {
+    font-size: 1.6rem;
+  }
+
+  /* Fix buttons */
+  .button-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn {
+    position: relative;
+    width: 100%;
+    max-width: 250px;
+    margin: auto;
+    font-size: 16px;
+    padding: 12px;
+    transform: none;
+  }
+
+  /* Disable weird offsets */
+  .yes-btn,
+  .no-btn {
+    left: auto;
+    right: auto;
+  }
+
+  /* Loader fix */
+  .cssload-main {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 100px auto;
+  }
+
+  /* Remove padding hacks */
+  .center-btn-wrapper,
+  .gif-result {
+    padding-left: 0;
+  }
+}
