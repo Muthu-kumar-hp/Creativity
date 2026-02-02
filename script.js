@@ -5,33 +5,65 @@ const heartLoader = document.querySelector(".cssload-main");
 const yesBtn = document.querySelector(".js-yes-btn");
 const noBtn = document.querySelector(".js-no-btn");
 
-// /change the postion of no button
-noBtn.addEventListener("mouseover", () => {
-  const newX = Math.floor(Math.random() * questionContainer.offsetWidth);
-  const newY = Math.floor(Math.random() * questionContainer.offsetWidth);
+/* ============================
+   NO BUTTON MOVEMENT (RESPONSIVE)
+   ============================ */
 
-  noBtn.style.left = `${newX}px`;
-  noBtn.style.top = `${newY}px`;
+function moveNoButton() {
+  const containerRect = questionContainer.getBoundingClientRect();
+  const btnRect = noBtn.getBoundingClientRect();
+
+  const maxX = containerRect.width - btnRect.width;
+  const maxY = containerRect.height - btnRect.height;
+
+  // Safety fallback
+  if (maxX <= 0 || maxY <= 0) return;
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  noBtn.style.position = "absolute";
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
+}
+
+/* Desktop: Hover */
+noBtn.addEventListener("mouseenter", moveNoButton);
+
+/* Mobile: Touch */
+noBtn.addEventListener("touchstart", e => {
+  e.preventDefault(); // prevent click
+  moveNoButton();
 });
 
-// yes button functionality
+/* ============================
+   YES BUTTON LOGIC
+   ============================ */
 
 yesBtn.addEventListener("click", () => {
   questionContainer.style.display = "none";
-  heartLoader.style.display = "inherit";
+  heartLoader.style.display = "block";
 
-  const timeoutId = setTimeout(() => {
+  setTimeout(() => {
     heartLoader.style.display = "none";
-    resultContainer.style.display = "inherit";
-    gifResult.play();
+    resultContainer.style.display = "block";
+
+    if (gifResult && gifResult.play) {
+      gifResult.play();
+    }
+
   }, 3000);
 });
+
+/* ============================
+   PARTICLE BACKGROUND
+   ============================ */
 
 const canvas = document.getElementById("particle-canvas");
 const ctx = canvas.getContext("2d");
 
 let particles = [];
-const count = 120;
+const count = window.innerWidth < 768 ? 60 : 120; // Less particles on mobile
 
 /* Resize */
 function resize() {
@@ -39,16 +71,17 @@ function resize() {
   canvas.height = window.innerHeight;
 }
 resize();
+
 window.addEventListener("resize", resize);
 
-/* Particle class */
+/* Particle */
 class Particle {
   constructor() {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
 
-    this.vx = (Math.random() - 0.5) * 1.2;
-    this.vy = (Math.random() - 0.5) * 1.2;
+    this.vx = (Math.random() - 0.5) * 1;
+    this.vy = (Math.random() - 0.5) * 1;
 
     this.size = Math.random() * 2 + 1;
     this.alpha = Math.random() * 0.6 + 0.2;
@@ -58,23 +91,28 @@ class Particle {
     this.x += this.vx;
     this.y += this.vy;
 
-    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    if (this.x <= 0 || this.x >= canvas.width) this.vx *= -1;
+    if (this.y <= 0 || this.y >= canvas.height) this.vy *= -1;
   }
 
   draw() {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-
     ctx.fillStyle = `rgba(255,255,255,${this.alpha})`;
     ctx.fill();
   }
 }
 
-/* Create particles */
-for (let i = 0; i < count; i++) {
-  particles.push(new Particle());
+/* Create */
+function createParticles() {
+  particles = [];
+
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle());
+  }
 }
+
+createParticles();
 
 /* Animate */
 function animate() {
